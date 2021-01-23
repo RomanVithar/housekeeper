@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,13 +13,19 @@ import java.util.List;
 
 public class Note implements Serializable {
     private List<OneWrite> listWrites;
-    private final String pathToFile = "pass_data.json";
+    private final File file;
     private final ObjectMapper mapper;
 
 
     public Note() throws IOException {
         listWrites = new ArrayList<OneWrite>();
         mapper = new ObjectMapper();
+        file = new File( "pass_data.json");
+        if(!file.exists()){
+            FileWriter fw = new FileWriter(file);
+            fw.write("[]");
+            fw.close();
+        }
     }
 
     public void add(String password, String login, String from, String description) {
@@ -53,11 +60,11 @@ public class Note implements Serializable {
     }
 
     public void serialize() throws IOException {
-        mapper.writeValue(new File(pathToFile), listWrites);
+        mapper.writeValue(file, listWrites);
     }
 
     public void deserialize() throws IOException {
-        listWrites = mapper.readValue(new File(pathToFile),
+        listWrites = mapper.readValue(file,
                 new TypeReference<List<OneWrite>>() {
                 });
 
